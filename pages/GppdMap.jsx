@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import zoom from "./lib/map-zoom.js";
+import { fuelGroupToColour } from "./config.js";
 
 import countries from "pages/data/ne_110m_admin_0_countries.json";
 
@@ -53,20 +54,27 @@ function renderMapToCanvas({
 }) {
   const path = d3.geoPath(projection, context);
 
-  context.clearRect(0, 0, width, height);
+  //context.clearRect(0, 0, width, height);
+  context.fillStyle = "#d9ebfb";
+  context.fillRect(0, 0, width, height);
 
   context.beginPath();
   path(countries);
-  context.fillStyle = "#ccc";
-  context.strokeStyle = "#fff";
+  context.fillStyle = "#fff";
+  context.strokeStyle = "#aaa";
   context.fill();
   context.stroke();
 
-  for (const plant of gppd.slice(1000)) {
+  const zoomLevel = projection.scale() / projection._scale;
+
+  context.globalAlpha = 0.7;
+  for (const plant of gppd) {
     context.beginPath();
-    context.strokeStyle = "steelblue";
+    context.fillStyle = fuelGroupToColour[plant.fuel_group];
     const [x, y] = projection([plant.longitude, plant.latitude]);
-    context.arc(x, y, 4, 0, 2 * Math.PI);
-    context.stroke();
+    const radius = Math.sqrt(plant.capacity_mw) * 0.05 * Math.sqrt(zoomLevel);
+    context.arc(x, y, radius, 0, 2 * Math.PI);
+    context.fill();
   }
+  context.globalAlpha = 1;
 }

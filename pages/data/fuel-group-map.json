@@ -1,1 +1,17 @@
-[{"primary_fuel":"Coal","fuel_group":"Fossil fuels"},{"primary_fuel":"Gas","fuel_group":"Fossil fuels"},{"primary_fuel":"Hydro","fuel_group":"Hydro"},{"primary_fuel":"Nuclear","fuel_group":"Nuclear"},{"primary_fuel":"Wind","fuel_group":"Wind"},{"primary_fuel":"Oil","fuel_group":"Fossil fuels"},{"primary_fuel":"Solar","fuel_group":"Solar"},{"primary_fuel":"Biomass","fuel_group":"Other"},{"primary_fuel":"Waste","fuel_group":"Other"},{"primary_fuel":"Geothermal","fuel_group":"Other"},{"primary_fuel":"Cogeneration","fuel_group":"Other"},{"primary_fuel":"Other","fuel_group":"Other"},{"primary_fuel":"Petcoke","fuel_group":"Fossil fuels"},{"primary_fuel":"Storage","fuel_group":"Other"},{"primary_fuel":"Wave and Tidal","fuel_group":"Other"}]
+{
+  "Coal": "Fossil fuels",
+  "Gas": "Fossil fuels",
+  "Hydro": "Hydro",
+  "Nuclear": "Nuclear",
+  "Wind": "Wind",
+  "Oil": "Fossil fuels",
+  "Solar": "Solar",
+  "Biomass": "Other",
+  "Waste": "Other",
+  "Geothermal": "Other",
+  "Cogeneration": "Other",
+  "Other": "Other",
+  "Petcoke": "Fossil fuels",
+  "Storage": "Other",
+  "Wave and Tidal": "Other"
+}
