@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Map } from "react-map-gl";
 import { GppdMap } from "./GppdMap.jsx";
+import { LegendBox } from "./LegendBox.jsx";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -21,6 +22,7 @@ export default function Home() {
     <>
       <main style={{}}>
         <p>The zoom level is {zoomLevel}</p>
+        <LegendBox />
         <GppdMap gppd={gppd} zoomCallback={zoomCallback}></GppdMap>
       </main>
     </>
