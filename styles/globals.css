@@ -50,7 +50,7 @@ hr {
   background: #230d41;
   color: #d1cadd;
   border-radius: 6px;
-  box-shadow: 1px 1px 8px 0px rgba(255, 255,255, 0.3);
+  box-shadow: 1px 1px 6px 0px rgba(255, 255,255, 0.15);
 }
 
 .legend-box {
