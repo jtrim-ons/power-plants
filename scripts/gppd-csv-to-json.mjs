@@ -1,14 +1,16 @@
+// This script reads the GPPD CSV, calculates dot positions for various zoom levels
+// using force layout, and saves only the required fields to a JSON file. 
+
 import * as fs from 'fs';
 import * as d3 from 'd3';
 import { dotConfig } from "../pages/config.mjs";
 
 const gppdPath = './global_power_plant_database_v_1_3/global_power_plant_database.csv';
-const countriesPath = './pages/data/ne_50m_admin_0_countries.json';
+const outJsonFilename = './pages/data/global_power_plant_database.json';
 
 const projection = d3.geoEqualEarth();
 
 let gppd = d3.csvParse(fs.readFileSync(gppdPath, 'utf8'));
-let countries = JSON.parse(fs.readFileSync(countriesPath, 'utf8'));   // GeoJSON
 
 for (const plant of gppd) {
   [plant.actualX, plant.actualY] = projection([plant.longitude, plant.latitude]);
@@ -24,8 +26,6 @@ for (const plant of gppd) {
 for (let logZoomLevel = dotConfig.maxLogZoom; logZoomLevel >= 0; logZoomLevel--) {
   forceLayoutPoints(gppd, projection, logZoomLevel);
 }
-//const reshapedCountries = reshapeCountries(countries, gppd, projection);
-
 const gppdSelectedFields = gppd.map(({
   country_long, name, capacity_mw, latitude, longitude, primary_fuel, forcedLocations
 }) => ({
@@ -34,8 +34,7 @@ const gppdSelectedFields = gppd.map(({
   forcedLocations: [...forcedLocations].reverse()
 }));
 
-fs.writeFileSync('./pages/data/global_power_plant_database.json', JSON.stringify(gppdSelectedFields));
-//fs.writeFileSync('./pages/data/reshaped-countries.json', JSON.stringify(reshapedCountries));
+fs.writeFileSync(outJsonFilename, JSON.stringify(gppdSelectedFields));
 
 function forceLayoutPoints(gppd, projection, logZoomLevel) {
   // Note: this function modifies gppd. It moves the projected x and y coordinates,
@@ -66,60 +65,4 @@ function forceLayoutPoints(gppd, projection, logZoomLevel) {
       .map(d => +d.toFixed(6));  // store fewer decimal places to reduce file size
     plant.forcedLocations.push(location);
   }
-}
-
-function reshapeCountries(countries, gppd, projection) {
-  const reshapedCountries = JSON.parse(JSON.stringify(countries));
-
-  const gppdPointsQuadtree = d3.quadtree(
-    gppd,
-    (d) => d.actualX,
-    (d) => d.actualY
-  );
-
-  function movePoint(p) {
-    // Modify the point's position, in place.
-    const [x, y] = projection(p);
-    const nearestPlant = gppdPointsQuadtree.find(x, y);
-    const xMove = nearestPlant.x - nearestPlant.actualX;
-    const yMove = nearestPlant.y - nearestPlant.actualY;
-    const xDist = x - nearestPlant.x;
-    const yDist = y - nearestPlant.y;
-    const dist = Math.hypot(xDist, yDist);
-
-    // moveFactor is:
-    //   1 if the point has the same location as its nearest plant,
-    //   0 if it's at least 10 units away,
-    //   a value between 0 and 1 otherwise.
-    const moveFactor = Math.max(1 - dist / 10, 0);
-
-    // Move the point in the same direction as its nearest plant,
-    // but only if the nearest plant is quite nearby.
-    [p[0], p[1]] = projection.invert([
-      x + xMove * moveFactor,
-      y + yMove * moveFactor
-    ]);
-  }
-
-  function movePolygon(polygon) {
-    // Modify the position of all of the polygon's points, in place.
-    for (const ring of polygon) {
-      for (const point of ring) {
-        movePoint(point);
-      }
-    }
-  }
-
-  for (const feature of reshapedCountries.features) {
-    const g = feature.geometry;
-    if (g.type === "Polygon") {
-      movePolygon(g.coordinates);
-    } else if (g.type === "MultiPolygon") {
-      for (const polygon of g.coordinates) {
-        movePolygon(polygon);
-      }
-    }
-  }
-
-  return reshapedCountries;
 }
