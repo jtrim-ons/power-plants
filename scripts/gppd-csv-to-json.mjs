@@ -54,10 +54,12 @@ function forceLayoutPoints(gppd, projection, logZoomLevel) {
     )
     .force(
       "collide",
-      d3.forceCollide().radius((d) => Math.sqrt(d.capacity_mw) * 0.06 / Math.sqrt(zoomLevel) + 0.01)
+      d3.forceCollide()
+        .radius((d) => Math.sqrt(d.capacity_mw) * 0.06 / Math.sqrt(zoomLevel))
+        .iterations(5)
     ) // collide
     .stop()
-    .tick(2);
+    .tick(5);
 
   for (const plant of gppd) {
     const location = projection.invert([plant.x, plant.y])
