@@ -107,7 +107,7 @@ function renderMapToCanvas({
         ]
       : [x0, y0];
 
-    const radius = Math.sqrt(plant.capacity_mw) * radiusMultiplier;
+    const radius = plant.sqrt_capacity * radiusMultiplier;
     if (
       x > -radius &&
       y > -radius &&
