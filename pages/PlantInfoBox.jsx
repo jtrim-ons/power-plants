@@ -3,15 +3,20 @@ export const PlantInfoBox = ({ plant }) => {
     <div className="plant-info-box">
       <h2>{plant.name}</h2>
       <hr></hr>
-      <p>
-        <strong>Fuel:</strong> {plant.primary_fuel}
-      </p>
-      <p>
-        <strong>Capacity:</strong> {(+plant.capacity_mw).toLocaleString()} MW
-      </p>
-      <p>
-        <strong>Country:</strong> {plant.country_long}
-      </p>
+      <div className="info-grid">
+        <div>
+          <strong>Fuel:</strong>
+        </div>
+        <div>{plant.primary_fuel}</div>
+        <div>
+          <strong>Capacity:</strong>
+        </div>
+        <div>{(+plant.capacity_mw).toLocaleString()} MW</div>
+        <div>
+          <strong>Country:</strong>
+        </div>
+        <div>{plant.country_long}</div>
+      </div>
     </div>
   );
 };
