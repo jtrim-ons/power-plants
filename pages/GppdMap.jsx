@@ -1,14 +1,9 @@
 import { useLayoutEffect, useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import zoom from "./lib/map-zoom.js";
-import { fuelGroupToColour } from "./config.js";
 
 import countries50 from "pages/data/ne_50m_admin_0_countries.json";
 import countries110 from "pages/data/ne_110m_admin_0_countries.json";
-
-const fuelGroupToColourMap = Object.fromEntries(
-  fuelGroupToColour.map(({ group, colour }) => [group, colour])
-);
 
 export const GppdMap = ({ gppd, zoomCallback }) => {
   const chartRef = useRef();
@@ -91,22 +86,18 @@ function renderMapToCanvas({
   const radiusMultiplier = 0.06 * Math.sqrt(zoomLevel);
   zoomCallback(zoomLevel + "   " + logZoomLevel);
 
-  context.globalAlpha = 1;
-  for (const plant of gppd) {
-    context.beginPath();
-    context.fillStyle = fuelGroupToColourMap[plant.fuel_group];
+  const zoomInt = Math.floor(logZoomLevel);
+  const zoomFrac = logZoomLevel % 1;
 
-    const zoomInt = Math.floor(logZoomLevel);
-    const zoomFrac = logZoomLevel % 1;
+  context.beginPath();
+
+  for (const plant of gppd) {
     const [x0, y0] = projection(plant.forcedLocations[zoomInt]);
     const [x1, y1] = projection(plant.forcedLocations[zoomInt + 1]);
-    const [x, y] = zoomFrac
-      ? [
-          x0 * (1 - zoomFrac) + x1 * zoomFrac,
-          y0 * (1 - zoomFrac) + y1 * zoomFrac,
-        ]
-      : [x0, y0];
-
+    const [x, y] = [
+      x0 * (1 - zoomFrac) + x1 * zoomFrac,
+      y0 * (1 - zoomFrac) + y1 * zoomFrac,
+    ];
     const radius = plant.sqrt_capacity * radiusMultiplier;
     if (
       x > -radius &&
@@ -115,11 +106,17 @@ function renderMapToCanvas({
       y < height + radius
     ) {
       // for efficiency, don't plot circles that are out of view
+      if (plant.colour !== context.fillStyle) {
+        // for efficiency, draw in batches of the same colour when possible
+        context.fill();
+        context.beginPath();
+        context.fillStyle = plant.colour;
+      }
+      context.moveTo(x + radius, y);
       context.arc(x, y, radius, 0, 2 * Math.PI);
-      context.fill();
     }
   }
-  context.globalAlpha = 1;
+  context.fill();
 }
 
 function useWindowSize() {
