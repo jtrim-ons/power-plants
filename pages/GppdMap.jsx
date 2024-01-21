@@ -30,10 +30,10 @@ export const GppdMap = ({ gppd, zoomCallback }) => {
 
     var context = canvas.node().getContext("2d");
 
-    const render = (countries) => () =>
+    const render = (isFastVersion) => () =>
       renderMapToCanvas({
         gppd,
-        countries,
+        isFastVersion,
         projection,
         context,
         width,
@@ -44,10 +44,10 @@ export const GppdMap = ({ gppd, zoomCallback }) => {
     d3.select(context.canvas)
       .call(
         zoom(projection)
-          .on("zoom.render", render(countries110))
-          .on("end.render", render(countries50))
+          .on("zoom.render", render(true))
+          .on("end.render", render(false))
       )
-      .call(render(countries50))
+      .call(render(false))
       .on("wheel", (event) => event.preventDefault());
 
     return () => {
@@ -60,7 +60,7 @@ export const GppdMap = ({ gppd, zoomCallback }) => {
 
 function renderMapToCanvas({
   gppd,
-  countries,
+  isFastVersion,
   projection,
   context,
   width,
@@ -70,12 +70,12 @@ function renderMapToCanvas({
   const path = d3.geoPath(projection, context);
 
   //context.clearRect(0, 0, width, height);
-  context.fillStyle = "#d9ebfb";
-  context.fillRect(0, 0, width, height);
+  //context.fillStyle = "#d9ebfb";
+  context.clearRect(0, 0, width, height);
 
   context.beginPath();
-  path(countries);
-  context.fillStyle = "#fff";
+  path(isFastVersion ? countries110 : countries50);
+  context.fillStyle = "#230d41";
   context.strokeStyle = "#aaa";
   context.fill();
   context.stroke();
@@ -84,28 +84,32 @@ function renderMapToCanvas({
   let logZoomLevel = Math.log2(zoomLevel) * 2;
   logZoomLevel = Math.min(10, Math.max(0, logZoomLevel)); // clamp between bounds
   const radiusMultiplier = 0.06 * Math.sqrt(zoomLevel);
-  zoomCallback(zoomLevel + "   " + logZoomLevel);
+  zoomCallback({ zoomLevel, logZoomLevel, radiusMultiplier });
 
   const zoomInt = Math.floor(logZoomLevel);
   const zoomFrac = logZoomLevel % 1;
 
   context.beginPath();
 
+  let count = 0;
   for (const plant of gppd) {
+    let radius = plant.sqrt_capacity * radiusMultiplier;
+    if (isFastVersion && radius < 0.5) continue;
+
+    ++count;
     const [x0, y0] = projection(plant.forcedLocations[zoomInt]);
     const [x1, y1] = projection(plant.forcedLocations[zoomInt + 1]);
     const [x, y] = [
       x0 * (1 - zoomFrac) + x1 * zoomFrac,
       y0 * (1 - zoomFrac) + y1 * zoomFrac,
     ];
-    const radius = plant.sqrt_capacity * radiusMultiplier;
     if (
       x > -radius &&
       y > -radius &&
       x < width + radius &&
       y < height + radius
     ) {
-      // for efficiency, don't plot circles that are out of view
+      // for efficiency, don't plot circles that tiny or out of view
       if (plant.colour !== context.fillStyle) {
         // for efficiency, draw in batches of the same colour when possible
         context.fill();
