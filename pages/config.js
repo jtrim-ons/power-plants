@@ -1,8 +1,8 @@
-export const fuelGroupToColour = ({
-  "Fossil fuels": "#333333",
-  Nuclear: "#9467bd",
-  Hydro: "#1f77b4",
-  Wind: "#2ca02c",
-  Solar: "#ff7f0e",
-  Other: "#f4da00"
-});
+export const fuelGroupToColour = ([
+  {group: "Fossil fuels", colour: "#333333"},
+  {group: "Nuclear", colour: "#9467bd"},
+  {group: "Hydro", colour: "#1f77b4"},
+  {group: "Wind", colour: "#2ca02c"},
+  {group: "Solar", colour: "#ff7f0e"},
+  {group: "Other", colour: "#f4da00"}
+]);

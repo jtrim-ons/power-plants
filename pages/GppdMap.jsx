@@ -6,6 +6,10 @@ import { fuelGroupToColour } from "./config.js";
 import countries50 from "pages/data/ne_50m_admin_0_countries.json";
 import countries110 from "pages/data/ne_110m_admin_0_countries.json";
 
+const fuelGroupToColourMap = Object.fromEntries(
+  fuelGroupToColour.map(({ group, colour }) => [group, colour])
+);
+
 export const GppdMap = ({ gppd, zoomCallback }) => {
   const chartRef = useRef();
   const windowSize = useWindowSize();
@@ -90,7 +94,7 @@ function renderMapToCanvas({
   context.globalAlpha = 1;
   for (const plant of gppd) {
     context.beginPath();
-    context.fillStyle = fuelGroupToColour[plant.fuel_group];
+    context.fillStyle = fuelGroupToColourMap[plant.fuel_group];
 
     const zoomInt = Math.floor(logZoomLevel);
     const zoomFrac = logZoomLevel % 1;
