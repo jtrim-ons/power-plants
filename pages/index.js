@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Map } from "react-map-gl";
-import { GppdMap } from "./GppdMap.jsx";
-import { LegendBox } from "./LegendBox.jsx";
-import { PlantInfoBox } from "./PlantInfoBox.jsx";
+import { GppdMap } from "../components/GppdMap.jsx";
+import { LegendBox } from "../components/LegendBox.jsx";
+import { PlantInfoBox } from "../components/PlantInfoBox.jsx";
 
 import { fuelGroupColours } from "./config.mjs";
 

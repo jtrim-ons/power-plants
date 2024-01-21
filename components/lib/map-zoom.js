@@ -2,7 +2,7 @@
 // Source: https://observablehq.com/@fil/map-pan-zoom
 
 import * as d3 from "d3";
-import { dotConfig } from "../config.mjs";
+import { dotConfig } from "../../pages/config.mjs";
 
 export default function zoom(
   projection,

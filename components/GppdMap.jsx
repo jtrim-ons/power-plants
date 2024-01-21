@@ -1,7 +1,7 @@
 import { useLayoutEffect, useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import zoom from "./lib/map-zoom.js";
-import { dotConfig } from "./config.mjs";
+import { dotConfig } from "../pages/config.mjs";
 
 import countries50 from "pages/data/ne_50m_admin_0_countries.json";
 import countries110 from "pages/data/ne_110m_admin_0_countries.json";
