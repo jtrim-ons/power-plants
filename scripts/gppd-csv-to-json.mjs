@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as d3 from 'd3';
+import { log } from 'console';
 
 const gppdPath = './global_power_plant_database_v_1_3/global_power_plant_database.csv';
 const countriesPath = './pages/data/ne_50m_admin_0_countries.json';
@@ -14,17 +15,19 @@ for (const plant of gppd) {
   [plant.x, plant.y] = [plant.actualX, plant.actualY];
 }
 
-for (let zoomLevel = 20; zoomLevel >= 1; zoomLevel--) {
-  forceLayoutPoints(gppd, projection, zoomLevel);
+for (let logZoomLevel = 6; logZoomLevel >= 0; logZoomLevel--) {
+  forceLayoutPoints(gppd, projection, logZoomLevel);
 }
 const reshapedCountries = reshapeCountries(countries, gppd, projection);
 
 fs.writeFileSync('./pages/data/global_power_plant_database.json', JSON.stringify(gppd));
 fs.writeFileSync('./pages/data/reshaped-countries.json', JSON.stringify(reshapedCountries));
 
-function forceLayoutPoints(gppd, projection, zoomLevel) {
+function forceLayoutPoints(gppd, projection, logZoomLevel) {
   // Note: this function modifies gppd. It moves the projected x and y coordinates,
-  // and adds forcedLng_${zoomLevel} and forcedLat_${zoomLevel} fields.
+  // and adds forcedLng_${logZoomLevel} and forcedLat_${logZoomLevel} fields.
+
+  const zoomLevel = Math.pow(2, logZoomLevel / 2);
 
   d3.forceSimulation(gppd)
     .force(
@@ -40,10 +43,10 @@ function forceLayoutPoints(gppd, projection, zoomLevel) {
       d3.forceCollide().radius((d) => Math.sqrt(d.capacity_mw) * 0.06 / Math.sqrt(zoomLevel) + 0.01)
     ) // collide
     .stop()
-    .tick(100);
+    .tick(3);
 
   for (const plant of gppd) {
-    [plant[`forcedLng_${zoomLevel}`], plant[`forcedLat_${zoomLevel}`]] = projection.invert([plant.x, plant.y]);
+    [plant[`forcedLng_${logZoomLevel}`], plant[`forcedLat_${logZoomLevel}`]] = projection.invert([plant.x, plant.y]);
   }
 }
 

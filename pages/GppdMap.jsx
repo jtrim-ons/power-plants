@@ -81,17 +81,18 @@ function renderMapToCanvas({
   context.fill();
   context.stroke();
 
-  let zoomLevel = projection.scale() / projection._scale;
-  zoomLevel = Math.min(20, Math.max(1, zoomLevel)); // clamp between 1 and 20
-  zoomCallback(zoomLevel);
+  const zoomLevel = projection.scale() / projection._scale;
+  let logZoomLevel = Math.log2(zoomLevel) * 2;
+  logZoomLevel = Math.min(6, Math.max(1, logZoomLevel)); // clamp between 1 and 6
+  zoomCallback(zoomLevel + "   " + logZoomLevel);
 
   context.globalAlpha = 1;
   for (const plant of gppd) {
     context.beginPath();
     context.fillStyle = fuelGroupToColour[plant.fuel_group];
 
-    const zoomInt = Math.floor(zoomLevel);
-    const zoomFrac = zoomLevel % 1;
+    const zoomInt = Math.floor(logZoomLevel);
+    const zoomFrac = logZoomLevel % 1;
     const [x0, y0] = projection([
       plant[`forcedLng_${zoomInt}`],
       plant[`forcedLat_${zoomInt}`],
