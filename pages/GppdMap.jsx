@@ -91,18 +91,18 @@ function renderMapToCanvas({
 
   context.beginPath();
 
-  let count = 0;
   for (const plant of gppd) {
     let radius = plant.sqrt_capacity * radiusMultiplier;
     if (isFastVersion && radius < 0.5) continue;
 
-    ++count;
     const [x0, y0] = projection(plant.forcedLocations[zoomInt]);
     const [x1, y1] = projection(plant.forcedLocations[zoomInt + 1]);
     const [x, y] = [
       x0 * (1 - zoomFrac) + x1 * zoomFrac,
       y0 * (1 - zoomFrac) + y1 * zoomFrac,
     ];
+    plant.displayPosition = [x, y];
+    plant.displayRadius = radius;
     if (
       x > -radius &&
       y > -radius &&

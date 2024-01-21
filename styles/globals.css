@@ -22,6 +22,13 @@ h1 {
   margin: 6px 0 12px;
 }
 
+h2 {
+  font-size: 1.1em;
+  font-variant: small-caps;
+  color: #efeaf8;
+  margin: 6px 0 12px;
+}
+
 hr {
   margin-bottom: 18px;
 }
@@ -35,16 +42,23 @@ hr {
   margin-top: 15px;
 }
 
-.legend-box {
+.legend-box, .plant-info-box {
   position: absolute;
   width: 270px;
-  left: 10px;
   bottom: 10px;
   padding: 10px;
   background: #230d41;
   color: #d1cadd;
   border-radius: 6px;
   box-shadow: 1px 1px 8px 0px rgba(255, 255,255, 0.3);
+}
+
+.legend-box {
+  left: 10px;
+}
+
+.plant-info-box {
+  right: 10px;
 }
 
 .legend-box p {
