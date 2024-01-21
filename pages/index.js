@@ -4,7 +4,7 @@ import { GppdMap } from "./GppdMap.jsx";
 import { LegendBox } from "./LegendBox.jsx";
 import { PlantInfoBox } from "./PlantInfoBox.jsx";
 
-import { fuelGroupColours } from "./config.js";
+import { fuelGroupColours } from "./config.mjs";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -28,17 +28,16 @@ export default function Home() {
   gppd.sort((a, b) => b.capacity_mw - a.capacity_mw);
 
   let [zoomLevel, setZoomLevel] = useState(0);
-  const zoomCallback = zoom => { setZoomLevel(zoom) };
+  const zoomCallback = zoom => { setZoomLevel(zoom), console.log(zoom) };
   const handleMouseMove = ev => {
     const mouseX = ev.pageX;
     const mouseY = ev.pageY;
-    if ("displayRadius" in gppd[0]) {
-      for (const plant of gppd) {
-        const dist = Math.hypot(plant.displayPosition[0] - mouseX, plant.displayPosition[1] - mouseY);
-        if (dist < plant.displayRadius) {
-          setHoveredPlant(plant);
-          return;
-        }
+    if (!("displayRadius" in gppd[0])) return;  // nothing drawn yet
+    for (const plant of gppd) {
+      const dist = Math.hypot(plant.displayPosition[0] - mouseX, plant.displayPosition[1] - mouseY);
+      if (dist < plant.displayRadius) {
+        setHoveredPlant(plant);
+        return;
       }
     }
     setHoveredPlant(null);

@@ -14,3 +14,11 @@ export const capacitiesForLegend = [
   1000,
   10000
 ];
+
+export const dotConfig = {
+  baseRadius: 0.06,
+  logZoomMultiplier: 3,
+  maxZoom: 20,
+  maxLogZoom: 13,
+  forceTickCount: 5
+};

@@ -1,4 +1,4 @@
-import { fuelGroupColours, capacitiesForLegend } from "./config.js";
+import { fuelGroupColours, capacitiesForLegend } from "./config.mjs";
 import { Fragment, useEffect, useRef } from "react";
 
 export const LegendBox = ({ zoomLevel }) => {

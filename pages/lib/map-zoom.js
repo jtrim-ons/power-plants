@@ -2,6 +2,7 @@
 // Source: https://observablehq.com/@fil/map-pan-zoom
 
 import * as d3 from "d3";
+import { dotConfig } from "../config.mjs";
 
 export default function zoom(
   projection,
@@ -10,7 +11,7 @@ export default function zoom(
     scale = projection._scale === undefined
       ? (projection._scale = projection.scale())
       : projection._scale,
-    scaleExtent = [1, 20],
+    scaleExtent = [1, dotConfig.maxZoom],
     translate = projection
       .translate()
       .map((d) => d / (projection.scale() / scale)),

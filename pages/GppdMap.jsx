@@ -1,6 +1,7 @@
 import { useLayoutEffect, useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import zoom from "./lib/map-zoom.js";
+import { dotConfig } from "./config.mjs";
 
 import countries50 from "pages/data/ne_50m_admin_0_countries.json";
 import countries110 from "pages/data/ne_110m_admin_0_countries.json";
@@ -81,9 +82,9 @@ function renderMapToCanvas({
   context.stroke();
 
   const zoomLevel = projection.scale() / projection._scale;
-  let logZoomLevel = Math.log2(zoomLevel) * 2;
-  logZoomLevel = Math.min(10, Math.max(0, logZoomLevel)); // clamp between bounds
-  const radiusMultiplier = 0.06 * Math.sqrt(zoomLevel);
+  let logZoomLevel = Math.log2(zoomLevel) * dotConfig.logZoomMultiplier;
+  logZoomLevel = Math.max(0, logZoomLevel);
+  const radiusMultiplier = dotConfig.baseRadius * Math.sqrt(zoomLevel);
   zoomCallback({ zoomLevel, logZoomLevel, radiusMultiplier });
 
   const zoomInt = Math.floor(logZoomLevel);
