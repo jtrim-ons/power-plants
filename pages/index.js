@@ -22,7 +22,7 @@ export default function Home() {
     <>
       <main style={{}}>
         <p>The zoom level is {zoomLevel}</p>
-        <LegendBox />
+        <LegendBox zoomLevel={zoomLevel} />
         <GppdMap gppd={gppd} zoomCallback={zoomCallback}></GppdMap>
       </main>
     </>
