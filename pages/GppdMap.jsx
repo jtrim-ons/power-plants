@@ -13,7 +13,6 @@ export const GppdMap = ({ gppd, zoomCallback }) => {
   useEffect(() => {
     var width = windowSize[0],
       height = windowSize[1];
-    console.log(width, height);
 
     const projection = d3
       .geoEqualEarth()

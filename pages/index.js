@@ -28,7 +28,7 @@ export default function Home() {
   gppd.sort((a, b) => b.capacity_mw - a.capacity_mw);
 
   let [zoomLevel, setZoomLevel] = useState(0);
-  const zoomCallback = zoom => { setZoomLevel(zoom), console.log(zoom) };
+  const zoomCallback = zoom => { setZoomLevel(zoom) };
   const handleMouseMove = ev => {
     const mouseX = ev.pageX;
     const mouseY = ev.pageY;
