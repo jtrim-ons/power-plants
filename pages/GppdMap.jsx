@@ -83,7 +83,8 @@ function renderMapToCanvas({
 
   const zoomLevel = projection.scale() / projection._scale;
   let logZoomLevel = Math.log2(zoomLevel) * 2;
-  logZoomLevel = Math.min(6, Math.max(1, logZoomLevel)); // clamp between 1 and 6
+  logZoomLevel = Math.min(6, Math.max(0, logZoomLevel)); // clamp between 0 and 6
+  const radiusMultiplier = 0.06 * Math.sqrt(zoomLevel);
   zoomCallback(zoomLevel + "   " + logZoomLevel);
 
   context.globalAlpha = 1;
@@ -108,9 +109,17 @@ function renderMapToCanvas({
         ]
       : [x0, y0];
 
-    const radius = Math.sqrt(plant.capacity_mw) * 0.06 * Math.sqrt(zoomLevel);
-    context.arc(x, y, radius, 0, 2 * Math.PI);
-    context.fill();
+    const radius = Math.sqrt(plant.capacity_mw) * radiusMultiplier;
+    if (
+      x > -radius &&
+      y > -radius &&
+      x < width + radius &&
+      y < height + radius
+    ) {
+      // for efficiency, don't plot circles that are out of view
+      context.arc(x, y, radius, 0, 2 * Math.PI);
+      context.fill();
+    }
   }
   context.globalAlpha = 1;
 }
