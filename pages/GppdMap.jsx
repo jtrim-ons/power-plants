@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import zoom from "./lib/map-zoom.js";
 import { fuelGroupToColour } from "./config.js";
@@ -8,10 +8,12 @@ import countries110 from "pages/data/ne_110m_admin_0_countries.json";
 
 export const GppdMap = ({ gppd, zoomCallback }) => {
   const chartRef = useRef();
+  const windowSize = useWindowSize();
 
   useEffect(() => {
-    var width = 1152,
-      height = 700;
+    var width = windowSize[0],
+      height = windowSize[1];
+    console.log(width, height);
 
     const projection = d3
       .geoEqualEarth()
@@ -52,7 +54,7 @@ export const GppdMap = ({ gppd, zoomCallback }) => {
     return () => {
       d3.select(chartDivRef).selectAll("*").remove();
     };
-  }, [gppd]);
+  }, [gppd, windowSize]);
 
   return <div ref={chartRef} />;
 };
@@ -110,4 +112,18 @@ function renderMapToCanvas({
     context.fill();
   }
   context.globalAlpha = 1;
+}
+
+function useWindowSize() {
+  // https://stackoverflow.com/a/19014495
+  const [size, setSize] = useState([0, 0]);
+  useLayoutEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight]);
+    }
+    window.addEventListener("resize", updateSize);
+    updateSize();
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+  return size;
 }
