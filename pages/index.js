@@ -19,7 +19,7 @@ export default function Home() {
 
   return (
     <>
-      <main style={{ height: 1200 }}>
+      <main style={{}}>
         <p>The zoom level is {zoomLevel}</p>
         <GppdMap gppd={gppd} zoomCallback={zoomCallback}></GppdMap>
       </main>
