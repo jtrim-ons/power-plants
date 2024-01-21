@@ -3,7 +3,7 @@ import { Map } from "react-map-gl";
 import { GppdMap } from "./GppdMap.jsx";
 import { LegendBox } from "./LegendBox.jsx";
 
-import { fuelGroupToColour } from "./config.js";
+import { fuelGroupColours } from "./config.js";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -12,7 +12,7 @@ import fuelGroupMap from './data/fuel-group-map.json';
 
 export default function Home() {
   const fuelGroupToColourMap = Object.fromEntries(
-    fuelGroupToColour.map(({ group, colour }) => [group, colour])
+    fuelGroupColours.map(({ group, colour }) => [group, colour])
   );
 
   for (const plant of gppd) {
@@ -30,7 +30,6 @@ export default function Home() {
   return (
     <>
       <main style={{}}>
-        <p>The zoom level is {zoomLevel}</p>
         <LegendBox zoomLevel={zoomLevel} />
         <GppdMap gppd={gppd} zoomCallback={zoomCallback}></GppdMap>
       </main>

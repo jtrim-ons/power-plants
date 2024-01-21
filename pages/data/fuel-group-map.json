@@ -1,17 +1,17 @@
 {
   "Coal": "Coal",
-  "Gas": "Other fossil fuels",
+  "Gas": "Other fossil",
   "Hydro": "Hydro",
   "Nuclear": "Nuclear",
   "Wind": "Wind",
-  "Oil": "Other fossil fuels",
+  "Oil": "Other fossil",
   "Solar": "Solar",
   "Biomass": "Other",
   "Waste": "Other",
   "Geothermal": "Other",
   "Cogeneration": "Other",
   "Other": "Other",
-  "Petcoke": "Other fossil fuels",
+  "Petcoke": "Other fossil",
   "Storage": "Other",
   "Wave and Tidal": "Other"
 }
