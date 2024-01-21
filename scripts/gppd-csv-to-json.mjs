@@ -13,15 +13,29 @@ let countries = JSON.parse(fs.readFileSync(countriesPath, 'utf8'));   // GeoJSON
 for (const plant of gppd) {
   [plant.actualX, plant.actualY] = projection([plant.longitude, plant.latitude]);
   [plant.x, plant.y] = [plant.actualX, plant.actualY];
+
+  // plant.forcedLocations will contain one force-directed location for each
+  // log-zoom level. They are added in reverse order because the highest zoom
+  // levels require the least movement, but we'll save them to file in the
+  // correct order.
+  plant.forcedLocations = [];
 }
 
-for (let logZoomLevel = 6; logZoomLevel >= 0; logZoomLevel--) {
+for (let logZoomLevel = 10; logZoomLevel >= 0; logZoomLevel--) {
   forceLayoutPoints(gppd, projection, logZoomLevel);
 }
-const reshapedCountries = reshapeCountries(countries, gppd, projection);
+//const reshapedCountries = reshapeCountries(countries, gppd, projection);
 
-fs.writeFileSync('./pages/data/global_power_plant_database.json', JSON.stringify(gppd));
-fs.writeFileSync('./pages/data/reshaped-countries.json', JSON.stringify(reshapedCountries));
+const gppdSelectedFields = gppd.map(({
+  country_long, name, capacity_mw, latitude, longitude, primary_fuel, forcedLocations
+}) => ({
+  country_long, name, capacity_mw, sqrt_capacity: Math.sqrt(capacity_mw),
+  latitude, longitude, primary_fuel,
+  forcedLocations: [...forcedLocations].reverse()
+}));
+
+fs.writeFileSync('./pages/data/global_power_plant_database.json', JSON.stringify(gppdSelectedFields));
+//fs.writeFileSync('./pages/data/reshaped-countries.json', JSON.stringify(reshapedCountries));
 
 function forceLayoutPoints(gppd, projection, logZoomLevel) {
   // Note: this function modifies gppd. It moves the projected x and y coordinates,
@@ -43,10 +57,12 @@ function forceLayoutPoints(gppd, projection, logZoomLevel) {
       d3.forceCollide().radius((d) => Math.sqrt(d.capacity_mw) * 0.06 / Math.sqrt(zoomLevel) + 0.01)
     ) // collide
     .stop()
-    .tick(3);
+    .tick(2);
 
   for (const plant of gppd) {
-    [plant[`forcedLng_${logZoomLevel}`], plant[`forcedLat_${logZoomLevel}`]] = projection.invert([plant.x, plant.y]);
+    const location = projection.invert([plant.x, plant.y])
+      .map(d => +d.toFixed(6));  // store fewer decimal places to reduce file size
+    plant.forcedLocations.push(location);
   }
 }
 

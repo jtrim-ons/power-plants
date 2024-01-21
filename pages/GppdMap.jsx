@@ -83,7 +83,7 @@ function renderMapToCanvas({
 
   const zoomLevel = projection.scale() / projection._scale;
   let logZoomLevel = Math.log2(zoomLevel) * 2;
-  logZoomLevel = Math.min(6, Math.max(0, logZoomLevel)); // clamp between 0 and 6
+  logZoomLevel = Math.min(10, Math.max(0, logZoomLevel)); // clamp between bounds
   const radiusMultiplier = 0.06 * Math.sqrt(zoomLevel);
   zoomCallback(zoomLevel + "   " + logZoomLevel);
 
@@ -94,14 +94,8 @@ function renderMapToCanvas({
 
     const zoomInt = Math.floor(logZoomLevel);
     const zoomFrac = logZoomLevel % 1;
-    const [x0, y0] = projection([
-      plant[`forcedLng_${zoomInt}`],
-      plant[`forcedLat_${zoomInt}`],
-    ]);
-    const [x1, y1] = projection([
-      plant[`forcedLng_${zoomInt + 1}`],
-      plant[`forcedLat_${zoomInt + 1}`],
-    ]);
+    const [x0, y0] = projection(plant.forcedLocations[zoomInt]);
+    const [x1, y1] = projection(plant.forcedLocations[zoomInt + 1]);
     const [x, y] = zoomFrac
       ? [
           x0 * (1 - zoomFrac) + x1 * zoomFrac,
