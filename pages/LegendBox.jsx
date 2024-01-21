@@ -34,6 +34,7 @@ export const LegendBox = ({ zoomLevel }) => {
         <a href="https://datasets.wri.org/dataset/globalpowerplantdatabase">
           Global Power Plant Database
         </a>
+        . Note that the database has less than 50% coverage for wind and solar.
       </div>
     </div>
   );
