@@ -63,7 +63,7 @@ const SizeKeyCanvas = ({ capacity, zoomLevel }) => {
     const position = Math.max(radius, width / 2);
     context.arc(position, position, radius, 0, 2 * Math.PI);
     context.fill();
-  }, [capacity, zoomLevel]);
+  }, [capacity, zoomLevel, height, radius]);
 
   return <canvas ref={canvasRef} width={width} height={height} />;
 };
