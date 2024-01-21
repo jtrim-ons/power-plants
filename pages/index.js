@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Map } from "react-map-gl";
 import { GppdMap } from "./GppdMap.jsx";
 
@@ -13,10 +14,14 @@ export default function Home() {
   // avoid plotting large plants on top of small ones
   gppd.sort((a, b) => b.capacity_mw - a.capacity_mw);
 
+  let [zoomLevel, setZoomLevel] = useState(0);
+  const zoomCallback = zoom => { setZoomLevel(zoom) };
+
   return (
     <>
       <main style={{ height: 1200 }}>
-        <GppdMap gppd={gppd}></GppdMap>
+        <p>The zoom level is {zoomLevel}</p>
+        <GppdMap gppd={gppd} zoomCallback={zoomCallback}></GppdMap>
       </main>
     </>
   );

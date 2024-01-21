@@ -10,7 +10,7 @@ export default function zoom(
     scale = projection._scale === undefined
       ? (projection._scale = projection.scale())
       : projection._scale,
-    scaleExtent = [0.8, 8],
+    scaleExtent = [1, 20],
     translate = projection
       .translate()
       .map((d) => d / (projection.scale() / scale)),
