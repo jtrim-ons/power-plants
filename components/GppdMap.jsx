@@ -5,6 +5,10 @@ import { dotConfig } from "../pages/config.mjs";
 
 import countries50 from "pages/data/ne_50m_admin_0_countries.json";
 import countries110 from "pages/data/ne_110m_admin_0_countries.json";
+import populated_places from "pages/data/ne_50m_populated_places_simple.json";
+
+// Try to show large city labels first
+populated_places.features.sort((a, b) => b.pop_max - a.pop_max);
 
 export const GppdMap = ({
   gppd,
@@ -78,10 +82,9 @@ function renderMapToCanvas({
 }) {
   const path = d3.geoPath(projection, context);
 
-  //context.clearRect(0, 0, width, height);
-  //context.fillStyle = "#d9ebfb";
   context.clearRect(0, 0, width, height);
 
+  // display the background map
   context.beginPath();
   path(isFastVersion ? countries110 : countries50);
   context.fillStyle = "#230d41";
@@ -102,9 +105,10 @@ function renderMapToCanvas({
 
   const plantDisplayPositions = [];
 
+  // display the plant or country dots
   for (const plant of gppd) {
     if (showCountryDots !== plant.isCountryDot) {
-      // don't show tooltip for this plant
+      // don't show tooltip for this plant/country
       plantDisplayPositions.push([-1, -1, -1]);
       continue;
     }
@@ -136,6 +140,24 @@ function renderMapToCanvas({
   }
   context.fill();
   setPlantDisplayPositions(plantDisplayPositions);
+
+  if (zoomLevel > 15) {
+    displayCities(context, projection);
+  }
+}
+
+function displayCities(context, projection) {
+  context.strokeStyle = "#e8e4ef";
+  context.fillStyle = "#e8e4ef";
+  context.font = "16px sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  for (const city of populated_places.features) {
+    const cityProps = city.properties;
+    const [x, y] = projection([cityProps.longitude, cityProps.latitude]);
+    const w = 8;
+    context.fillText(cityProps.name, x, y);
+  }
 }
 
 function useWindowSize() {
