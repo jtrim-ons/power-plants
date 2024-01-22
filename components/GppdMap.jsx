@@ -6,7 +6,7 @@ import { dotConfig } from "../pages/config.mjs";
 import countries50 from "pages/data/ne_50m_admin_0_countries.json";
 import countries110 from "pages/data/ne_110m_admin_0_countries.json";
 
-export const GppdMap = ({ gppd, zoomCallback }) => {
+export const GppdMap = ({ gppd, zoomCallback, setPlantDisplayPositions }) => {
   const chartRef = useRef();
   const windowSize = useWindowSize();
 
@@ -39,6 +39,7 @@ export const GppdMap = ({ gppd, zoomCallback }) => {
         width,
         height,
         zoomCallback,
+        setPlantDisplayPositions,
       });
 
     d3.select(context.canvas)
@@ -66,6 +67,7 @@ function renderMapToCanvas({
   width,
   height,
   zoomCallback,
+  setPlantDisplayPositions,
 }) {
   const path = d3.geoPath(projection, context);
 
@@ -91,9 +93,10 @@ function renderMapToCanvas({
 
   context.beginPath();
 
+  const plantDisplayPositions = [];
+
   for (const plant of gppd) {
     let radius = plant.sqrt_capacity * radiusMultiplier;
-    if (isFastVersion && radius < 0.5) continue;
 
     const [x0, y0] = projection(plant.forcedLocations[zoomInt]);
     const [x1, y1] = projection(plant.forcedLocations[zoomInt + 1]);
@@ -101,26 +104,25 @@ function renderMapToCanvas({
       x0 * (1 - zoomFrac) + x1 * zoomFrac,
       y0 * (1 - zoomFrac) + y1 * zoomFrac,
     ];
-    plant.displayPosition = [x, y];
-    plant.displayRadius = radius;
-    if (
-      x > -radius &&
-      y > -radius &&
-      x < width + radius &&
-      y < height + radius
-    ) {
-      // for efficiency, don't plot circles that tiny or out of view
-      if (plant.colour !== context.fillStyle) {
-        // for efficiency, draw in batches of the same colour when possible
-        context.fill();
-        context.beginPath();
-        context.fillStyle = plant.colour;
-      }
-      context.moveTo(x + radius, y);
-      context.arc(x, y, radius, 0, 2 * Math.PI);
+    plantDisplayPositions.push([x, y, radius]);
+
+    if (isFastVersion && radius < 0.5) continue;
+
+    // for efficiency, don't plot circles that are tiny or out of view
+    if (x < -radius || y < -radius || x > width + radius || y > height + radius)
+      continue;
+
+    if (plant.colour !== context.fillStyle) {
+      // for efficiency, draw in batches of the same colour when possible
+      context.fill();
+      context.beginPath();
+      context.fillStyle = plant.colour;
     }
+    context.moveTo(x + radius, y);
+    context.arc(x, y, radius, 0, 2 * Math.PI);
   }
   context.fill();
+  setPlantDisplayPositions(plantDisplayPositions);
 }
 
 function useWindowSize() {
