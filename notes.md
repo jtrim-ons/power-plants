@@ -4,8 +4,6 @@
 
 - Add a toggle between capacity and annual generation
 - Add map zoom controls
-- Add more background map detail; e.g. cities or US state boundaries etc.
 - See if this kind of map can be done in Mapbox
 - Perhaps: Scrollytelling, possibly also showing bar charts by country or fuel
-
-- 
+- Use label positions (e.g. from Natural Earth) as a better location for aggregated country dots
