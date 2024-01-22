@@ -1,7 +1,11 @@
 import { fuelGroupColours, capacitiesForLegend } from "../pages/config.mjs";
 import { Fragment, useEffect, useRef } from "react";
 
-export const LegendBox = ({ zoomLevel }) => {
+export const LegendBox = ({ zoomLevel, setShowCountryDots }) => {
+  const handleShowCountryChange = (event) => {
+    setShowCountryDots(event.target.checked);
+  };
+
   return (
     <div className="legend-box">
       <h1>The World&apos;s Power Plants</h1>
@@ -24,6 +28,13 @@ export const LegendBox = ({ zoomLevel }) => {
             <div>{mwToString(capacity)}</div>
           </Fragment>
         ))}
+      </div>
+      <div class="switch-container">
+        <div>Show one dot per fuel type and country</div>
+        <label class="switch">
+          <input type="checkbox" onChange={handleShowCountryChange}></input>
+          <span class="slider round"></span>
+        </label>
       </div>
       <p>
         Plants are shown as close as possible to their location while avoiding

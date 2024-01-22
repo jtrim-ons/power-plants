@@ -6,7 +6,12 @@ import { dotConfig } from "../pages/config.mjs";
 import countries50 from "pages/data/ne_50m_admin_0_countries.json";
 import countries110 from "pages/data/ne_110m_admin_0_countries.json";
 
-export const GppdMap = ({ gppd, zoomCallback, setPlantDisplayPositions }) => {
+export const GppdMap = ({
+  gppd,
+  showCountryDots,
+  zoomCallback,
+  setPlantDisplayPositions,
+}) => {
   const chartRef = useRef();
   const windowSize = useWindowSize();
 
@@ -38,6 +43,7 @@ export const GppdMap = ({ gppd, zoomCallback, setPlantDisplayPositions }) => {
         context,
         width,
         height,
+        showCountryDots,
         zoomCallback,
         setPlantDisplayPositions,
       });
@@ -54,7 +60,7 @@ export const GppdMap = ({ gppd, zoomCallback, setPlantDisplayPositions }) => {
     return () => {
       d3.select(chartDivRef).selectAll("*").remove();
     };
-  }, [gppd, windowSize]);
+  }, [gppd, showCountryDots, windowSize]);
 
   return <div ref={chartRef} />;
 };
@@ -66,6 +72,7 @@ function renderMapToCanvas({
   context,
   width,
   height,
+  showCountryDots,
   zoomCallback,
   setPlantDisplayPositions,
 }) {
@@ -96,6 +103,12 @@ function renderMapToCanvas({
   const plantDisplayPositions = [];
 
   for (const plant of gppd) {
+    if (showCountryDots !== plant.isCountryDot) {
+      // don't show tooltip for this plant
+      plantDisplayPositions.push([-1, -1, -1]);
+      continue;
+    }
+
     let radius = plant.sqrt_capacity * radiusMultiplier;
 
     const [x0, y0] = projection(plant.forcedLocations[zoomInt]);
