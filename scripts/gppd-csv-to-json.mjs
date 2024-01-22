@@ -54,7 +54,7 @@ function processGppd(gppd, packTightly) {
   }
 
   for (let logZoomLevel = dotConfig.maxLogZoom; logZoomLevel >= 0; logZoomLevel--) {
-    forceLayoutPoints(gppd, projection, logZoomLevel);
+    forceLayoutPoints(gppd, projection, logZoomLevel, packTightly);
   }
 
   // remove unused fields from plant objects
@@ -66,7 +66,7 @@ function processGppd(gppd, packTightly) {
   }));
 }
 
-function forceLayoutPoints(gppd, projection, logZoomLevel) {
+function forceLayoutPoints(gppd, projection, logZoomLevel, packTightly) {
   // Note: this function modifies gppd. It moves the projected x and y coordinates,
   // and adds forcedLng_${logZoomLevel} and forcedLat_${logZoomLevel} fields.
 
