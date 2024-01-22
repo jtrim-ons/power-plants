@@ -54,6 +54,7 @@ function processGppd(gppd, packTightly) {
   }
 
   for (let logZoomLevel = dotConfig.maxLogZoom; logZoomLevel >= 0; logZoomLevel--) {
+    console.log("Log zoom level:", logZoomLevel);
     forceLayoutPoints(gppd, projection, logZoomLevel, packTightly);
   }
 

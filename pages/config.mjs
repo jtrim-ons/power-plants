@@ -33,18 +33,11 @@ export const capacitiesForLegend = [
   10000
 ];
 
-//export const dotConfig = {
-//  baseRadius: 0.055,
-//  logZoomMultiplier: 3,
-//  maxZoom: 80,
-//  maxLogZoom: 19,
-//  forceTickCount: 100
-//};
 export const dotConfig = {
   baseRadius: 0.055,
-  logZoomMultiplier: 1,
-  maxZoom: 20,
-  maxLogZoom: 3,
-  forceTickCount: 3,
+  logZoomMultiplier: 4,
+  maxZoom: 75,
+  maxLogZoom: 25,
+  forceTickCount: 10,
   layoutPadding: 1.1
 };
