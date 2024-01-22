@@ -35,6 +35,7 @@ export default function Home() {
     if (!("displayRadius" in gppd[0])) return;  // nothing drawn yet
     for (const plant of gppd) {
       const dist = Math.hypot(plant.displayPosition[0] - mouseX, plant.displayPosition[1] - mouseY);
+      if (Math.random() < 0.01) console.log(dist, plant.displayRadius)
       if (dist < plant.displayRadius) {
         setHoveredPlant(plant);
         return;
