@@ -29,11 +29,11 @@ export const LegendBox = ({ zoomLevel, setShowCountryDots }) => {
           </Fragment>
         ))}
       </div>
-      <div class="switch-container">
+      <div className="switch-container">
         <div>Show one dot per fuel type and country</div>
-        <label class="switch">
+        <label className="switch">
           <input type="checkbox" onChange={handleShowCountryChange}></input>
-          <span class="slider round"></span>
+          <span className="slider round"></span>
         </label>
       </div>
       <p>
