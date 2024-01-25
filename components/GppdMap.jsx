@@ -18,10 +18,46 @@ export const GppdMap = ({
 }) => {
   const chartRef = useRef();
   const windowSize = useWindowSize();
+  const zoomableMap = useRef(null);
 
   useEffect(() => {
-    var width = windowSize[0],
-      height = windowSize[1];
+    zoomableMap.current = new ZoomableMap(
+      gppd,
+      setPlantDisplayPositions,
+      windowSize,
+      zoomCallback,
+      chartRef
+    );
+
+    return () => {
+      d3.select(zoomableMap.current.chartDivRef).selectAll("*").remove();
+    };
+  }, [gppd, setPlantDisplayPositions, windowSize, zoomCallback]);
+
+  useEffect(() => {
+    if (!zoomableMap.current) return;
+    zoomableMap.current.showCountryDots = showCountryDots;
+    zoomableMap.current.render(false)();
+  }, [
+    gppd,
+    setPlantDisplayPositions,
+    windowSize,
+    zoomCallback,
+    showCountryDots,
+  ]);
+
+  return <div ref={chartRef} />;
+};
+
+class ZoomableMap {
+  constructor(
+    gppd,
+    setPlantDisplayPositions,
+    windowSize,
+    zoomCallback,
+    chartRef
+  ) {
+    const [width, height] = windowSize;
 
     const projection = d3
       .geoEqualEarth()
@@ -29,17 +65,17 @@ export const GppdMap = ({
       .translate([width / 2, height / 2])
       .precision(0.1);
 
-    const chartDivRef = chartRef.current;
+    this.chartDivRef = chartRef.current;
 
     var canvas = d3
-      .select(chartDivRef)
+      .select(this.chartDivRef)
       .append("canvas")
       .attr("width", width)
       .attr("height", height);
 
     var context = canvas.node().getContext("2d");
 
-    const render = (isFastVersion) => () =>
+    this.render = (isFastVersion) => () => {
       renderMapToCanvas({
         gppd,
         isFastVersion,
@@ -47,33 +83,21 @@ export const GppdMap = ({
         context,
         width,
         height,
-        showCountryDots,
+        showCountryDots: this.showCountryDots,
         zoomCallback,
         setPlantDisplayPositions,
       });
+    };
 
     d3.select(context.canvas)
       .call(
         zoom(projection)
-          .on("zoom.render", render(true))
-          .on("end.render", render(false))
+          .on("zoom.render", this.render(true))
+          .on("end.render", this.render(false))
       )
-      .call(render(false))
       .on("wheel", (event) => event.preventDefault());
-
-    return () => {
-      d3.select(chartDivRef).selectAll("*").remove();
-    };
-  }, [
-    gppd,
-    setPlantDisplayPositions,
-    showCountryDots,
-    windowSize,
-    zoomCallback,
-  ]);
-
-  return <div ref={chartRef} />;
-};
+  }
+}
 
 function renderMapToCanvas({
   gppd,
