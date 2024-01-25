@@ -29,8 +29,6 @@ export default function Home() {
   const [zoomLevel, setZoomLevel] = useState(0);
   const [showCountryDots, setShowCountryDots] = useState(false);
 
-  const zoomCallback = zoom => { setZoomLevel(zoom) };
-
   const [plantDisplayPositions, setPlantDisplayPositions] = useState(allDots.map(_ => [0, 0, -1]));
 
   const handleMouseMove = ev => {
@@ -51,7 +49,7 @@ export default function Home() {
     <div onMouseMove={(ev) => handleMouseMove(ev)}>
       <main style={{}}>
         <LegendBox zoomLevel={zoomLevel} setShowCountryDots={setShowCountryDots} />
-        <GppdMap gppd={allDots} showCountryDots={showCountryDots} zoomCallback={zoomCallback}
+        <GppdMap gppd={allDots} showCountryDots={showCountryDots} zoomCallback={setZoomLevel}
           setPlantDisplayPositions={setPlantDisplayPositions}></GppdMap>
         {hoveredPlant && <PlantInfoBox plant={hoveredPlant}></PlantInfoBox>}
       </main>
