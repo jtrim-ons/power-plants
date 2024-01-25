@@ -64,7 +64,13 @@ export const GppdMap = ({
     return () => {
       d3.select(chartDivRef).selectAll("*").remove();
     };
-  }, [gppd, showCountryDots, windowSize]);
+  }, [
+    gppd,
+    setPlantDisplayPositions,
+    showCountryDots,
+    windowSize,
+    zoomCallback,
+  ]);
 
   return <div ref={chartRef} />;
 };
